@@ -1,0 +1,37 @@
+server:
+  port: 8081 # Port sur lequel tournera l'auth-service
+
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+    ddl-auto: update # Crée ou met à jour les tables automatiquement au lancement
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  cloud:
+    gateway:
+      discovery:
+      locator:
+        enabled: true # Active la découverte automatique des routes via Eureka
+        lower-case-service-id: true
+      routes:
+        - id: auth-service-route
+          uri: lb://auth-service # "lb://" utilise l'équilibreur de charge Eureka pour cibler l'auth-service
+          predicates:
+            - Path=/api/auth/** # Toutes les requêtes commençant par /api/auth/ seront redirigées vers l'auth-service
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true

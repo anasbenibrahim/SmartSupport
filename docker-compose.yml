@@ -1,16 +1,77 @@
-version: '3.8'
-
 services:
+  # 1. Base de données PostgreSQL pour l'Auth Service
   postgres:
-    image: postgres:15-alpine
-    container_name: smartsupport-postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespassword
+    image: postgres:latest
+    container_name: postgres
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - microservices-net
+
+  # 2. Discovery Service (Eureka)
+  discovery-service:
+    build: ./discovery-service
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-net
+
+  # 3. Config Server
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    depends_on:
+      - discovery-service
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery-service:8761/eureka/
+    networks:
+      - microservices-net
+
+  # 4. Auth Service
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - maven-repo:/root/.m2
+    ports:
+      - "8081:8081"
+    depends_on:
+      - discovery-service
+      - config-server
+      - postgres
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/auth_db
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+    networks:
+      - microservices-net
+
+  # 5. API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8090:8090"
+    depends_on:
+      - discovery-service
+      - config-server
+      - auth-service
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge
 
 volumes:
-  postgres_data:
+  maven-repo:
