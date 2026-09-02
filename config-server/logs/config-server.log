@@ -1,0 +1,96 @@
+2026-09-02T15:37:49.060+01:00  INFO 29554 --- [config-server] [main] m.p.c.ConfigServerApplication            : Starting ConfigServerApplication v0.0.1-SNAPSHOT using Java 17.0.12 with PID 29554 (/home/anas/Desktop/smart-support/config-server/target/config-server-0.0.1-SNAPSHOT.jar started by anas in /home/anas/Desktop/smart-support/config-server)
+2026-09-02T15:37:49.063+01:00  INFO 29554 --- [config-server] [main] m.p.c.ConfigServerApplication            : The following 1 profile is active: "native"
+2026-09-02T15:37:50.619+01:00  INFO 29554 --- [config-server] [main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=c098b007-6d8c-3e72-88f6-50c29cc09e7d
+2026-09-02T15:37:51.063+01:00  INFO 29554 --- [config-server] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8888 (http)
+2026-09-02T15:37:51.085+01:00  INFO 29554 --- [config-server] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-02T15:37:51.085+01:00  INFO 29554 --- [config-server] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-02T15:37:51.127+01:00  INFO 29554 --- [config-server] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 2003 ms
+2026-09-02T15:37:52.581+01:00  INFO 29554 --- [config-server] [main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestClient.
+2026-09-02T15:37:52.807+01:00  WARN 29554 --- [config-server] [main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-09-02T15:37:52.815+01:00  INFO 29554 --- [config-server] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 5 endpoints beneath base path '/actuator'
+2026-09-02T15:37:52.879+01:00  INFO 29554 --- [config-server] [main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-09-02T15:37:52.914+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-09-02T15:37:52.921+01:00  INFO 29554 --- [config-server] [main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-09-02T15:37:52.935+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-09-02T15:37:52.935+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-09-02T15:37:52.935+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-09-02T15:37:52.936+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-09-02T15:37:52.936+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-09-02T15:37:52.936+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2026-09-02T15:37:52.936+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-09-02T15:37:53.451+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-09-02T15:37:53.455+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 10
+2026-09-02T15:37:53.458+01:00  INFO 29554 --- [config-server] [main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-09-02T15:37:53.461+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1788359873460 with initial instances count: 1
+2026-09-02T15:37:53.465+01:00  INFO 29554 --- [config-server] [main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application CONFIG-SERVER with eureka with status UP
+2026-09-02T15:37:53.465+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1788359873465, current=UP, previous=STARTING]
+2026-09-02T15:37:53.468+01:00  INFO 29554 --- [config-server] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:8888: registering service...
+2026-09-02T15:37:53.475+01:00  INFO 29554 --- [config-server] [main] o.s.c.n.e.s.EurekaServiceRegistry        : Unregistering application CONFIG-SERVER with eureka with status DOWN
+2026-09-02T15:37:53.476+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1788359873476, current=DOWN, previous=UP]
+2026-09-02T15:37:53.476+01:00  WARN 29554 --- [config-server] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-09-02T15:37:53.481+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Shutting down DiscoveryClient ...
+2026-09-02T15:37:53.531+01:00  INFO 29554 --- [config-server] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:8888 - registration status: 204
+2026-09-02T15:37:53.532+01:00  INFO 29554 --- [config-server] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:8888: registering service...
+2026-09-02T15:37:53.538+01:00  INFO 29554 --- [config-server] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:8888 - registration status: 204
+2026-09-02T15:37:53.539+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Unregistering ...
+2026-09-02T15:37:53.546+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:8888 - deregister  status: 200
+2026-09-02T15:37:53.546+01:00  INFO 29554 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Completed shut down of DiscoveryClient
+2026-09-02T15:37:53.578+01:00  INFO 29554 --- [config-server] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-09-02T15:37:53.600+01:00 ERROR 29554 --- [config-server] [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8888 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8888 or configure this application to listen on another port.
+
+2026-09-02T15:39:10.029+01:00  INFO 29992 --- [config-server] [main] m.p.c.ConfigServerApplication            : Starting ConfigServerApplication v0.0.1-SNAPSHOT using Java 17.0.12 with PID 29992 (/home/anas/Desktop/smart-support/config-server/target/config-server-0.0.1-SNAPSHOT.jar started by anas in /home/anas/Desktop/smart-support/config-server)
+2026-09-02T15:39:10.032+01:00  INFO 29992 --- [config-server] [main] m.p.c.ConfigServerApplication            : The following 1 profile is active: "native"
+2026-09-02T15:39:11.544+01:00  INFO 29992 --- [config-server] [main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=c098b007-6d8c-3e72-88f6-50c29cc09e7d
+2026-09-02T15:39:11.912+01:00  INFO 29992 --- [config-server] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 18888 (http)
+2026-09-02T15:39:11.927+01:00  INFO 29992 --- [config-server] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-02T15:39:11.928+01:00  INFO 29992 --- [config-server] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-02T15:39:11.954+01:00  INFO 29992 --- [config-server] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1855 ms
+2026-09-02T15:39:13.284+01:00  INFO 29992 --- [config-server] [main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestClient.
+2026-09-02T15:39:13.540+01:00  WARN 29992 --- [config-server] [main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-09-02T15:39:13.550+01:00  INFO 29992 --- [config-server] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 5 endpoints beneath base path '/actuator'
+2026-09-02T15:39:13.629+01:00  INFO 29992 --- [config-server] [main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-09-02T15:39:13.659+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-09-02T15:39:13.665+01:00  INFO 29992 --- [config-server] [main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-09-02T15:39:13.675+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-09-02T15:39:13.676+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-09-02T15:39:13.678+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-09-02T15:39:13.678+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-09-02T15:39:13.678+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-09-02T15:39:13.678+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2026-09-02T15:39:13.678+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-09-02T15:39:14.134+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-09-02T15:39:14.137+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 10
+2026-09-02T15:39:14.140+01:00  INFO 29992 --- [config-server] [main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-09-02T15:39:14.142+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1788359954141 with initial instances count: 1
+2026-09-02T15:39:14.146+01:00  INFO 29992 --- [config-server] [main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application CONFIG-SERVER with eureka with status UP
+2026-09-02T15:39:14.147+01:00  INFO 29992 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1788359954147, current=UP, previous=STARTING]
+2026-09-02T15:39:14.149+01:00  INFO 29992 --- [config-server] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:18888: registering service...
+2026-09-02T15:39:14.162+01:00  INFO 29992 --- [config-server] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 18888 (http) with context path '/'
+2026-09-02T15:39:14.164+01:00  INFO 29992 --- [config-server] [main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 18888
+2026-09-02T15:39:14.183+01:00  INFO 29992 --- [config-server] [main] m.p.c.ConfigServerApplication            : Started ConfigServerApplication in 4.956 seconds (process running for 5.656)
+2026-09-02T15:39:14.194+01:00  INFO 29992 --- [config-server] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:18888 - registration status: 204
+2026-09-02T15:39:23.526+01:00  INFO 29992 --- [config-server] [SpringApplicationShutdownHook] o.s.c.n.e.s.EurekaServiceRegistry        : Unregistering application CONFIG-SERVER with eureka with status DOWN
+2026-09-02T15:39:23.527+01:00  INFO 29992 --- [config-server] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1788359963527, current=DOWN, previous=UP]
+2026-09-02T15:39:23.530+01:00  INFO 29992 --- [config-server] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:18888: registering service...
+2026-09-02T15:39:23.538+01:00  INFO 29992 --- [config-server] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-02T15:39:23.546+01:00  INFO 29992 --- [config-server] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:18888 - registration status: 204
+2026-09-02T15:39:23.547+01:00  INFO 29992 --- [config-server] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-02T15:39:23.572+01:00  INFO 29992 --- [config-server] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Shutting down DiscoveryClient ...
+2026-09-02T15:39:26.573+01:00  INFO 29992 --- [config-server] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Unregistering ...
+2026-09-02T15:39:26.574+01:00  WARN 29992 --- [config-server] [DiscoveryClient-%d] c.netflix.discovery.TimedSupervisorTask  : task supervisor shutting down, can't accept the task
+2026-09-02T15:39:26.588+01:00  INFO 29992 --- [config-server] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:18888 - deregister  status: 200
+2026-09-02T15:39:26.589+01:00  INFO 29992 --- [config-server] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Completed shut down of DiscoveryClient

@@ -1,6 +1,7 @@
 package me.project.authservice.entity;
 
 public enum Role {
-    USER,
+    CUSTOMER,
+    SUPPORT_AGENT,
     ADMIN
 }

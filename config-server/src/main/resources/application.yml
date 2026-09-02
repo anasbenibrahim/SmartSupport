@@ -11,27 +11,15 @@ server:
 spring:
   application:
     name: config-server
+  profiles:
+    active: native
   
   # Configuration du Config Server
   cloud:
     config:
       server:
-        # Utiliser un repository Git local pour les configurations
-        git:
-          uri: file://${user.home}/smart-support-config
-          default-label: main
-          # Chercher les fichiers dans le dossier du service
-          search-paths: '{application}'
-          # Timeout pour les opérations Git
-          timeout: 5
-          # Cloner le repo au démarrage
-          clone-on-start: true
-          # Forcer le pull à chaque requête
-          force-pull: false
-        
-        # Alternative : Utiliser un répertoire local (sans Git)
-        # native:
-        #   search-locations: file:///config-repo
+        native:
+          search-locations: file:${CONFIG_REPO_PATH:${user.dir}/../smartsupport-config-repo}
         
         # Activer les endpoints de monitoring
         monitor:
