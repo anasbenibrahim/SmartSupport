@@ -1,39 +1,168 @@
+# ============================================
+# CONFIGURATION LOCALE API GATEWAY
+# ============================================
+
 server:
   port: 8090
+  address: 0.0.0.0
+  # Configuration HTTP/2 (optionnel)
+  http2:
+    enabled: true
+  # Timeouts
+  netty:
+    connection-timeout: 5000
 
 spring:
   application:
     name: api-gateway
-  # Connexion au Config Server (Standard Spring Boot 3)
-  config:
-    import: optional:configserver:http://localhost:8888
-
+  
+  # Configuration du Gateway
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
+      # Configuration CORS globale
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins:
+              - "http://localhost:3000"
+              - "http://localhost:4200"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
+            allowed-headers:
+              - Authorization
+              - Content-Type
+              - X-Requested-With
+              - Accept
+              - Origin
+              - Access-Control-Request-Method
+              - Access-Control-Request-Headers
+            exposed-headers:
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Credentials
+            allow-credentials: true
+            max-age: 3600
+      
+      # Filtres par défaut appliqués à toutes les routes
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+        - AddResponseHeader=X-Response-Time, %{processing-time}ms
+      
+      # Configuration des routes
       routes:
-        # Route pour le futur Auth Service
+        # Route pour Auth Service (à implémenter)
         - id: auth-service
-          uri: lb://AUTH-SERVICE
+          uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
-
-        # Route pour le futur Ticket Service
-        - id: ticket-service
-          uri: lb://TICKET-SERVICE
-          predicates:
-            - Path=/api/tickets/**
-
-        # Route pour le futur User Service
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
+          metadata:
+            response-timeout: 5000
+            connect-timeout: 5000
+        
+        # Route pour User Service (à implémenter)
         - id: user-service
-          uri: lb://USER-SERVICE
+          uri: lb://user-service
           predicates:
             - Path=/api/users/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/api/users/(?<segment>.*), /$\{segment}
+        
+        # Route pour Ticket Service (à implémenter)
+        - id: ticket-service
+          uri: lb://ticket-service
+          predicates:
+            - Path=/api/tickets/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/api/tickets/(?<segment>.*), /$\{segment}
+      
+      # Configuration du load balancer
+      loadbalancer:
+        use-spring-cloud-loadbalancer: true
+        retry:
+          enabled: true
 
+# Configuration Resilience4j (Circuit Breaker)
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        failure-rate-threshold: 50
+        event-consumer-buffer-size: 10
+        register-health-indicator: true
+    instances:
+      auth-service:
+        base-config: default
+      user-service:
+        base-config: default
+      ticket-service:
+        base-config: default
+  
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 5s
+        cancel-running-future: true
+
+# Configuration Eureka
 eureka:
   client:
-    serviceUrl:
+    service-url:
       defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 5
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+# Configuration du Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway,prometheus,env,refresh
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+# Configuration des Logs
+logging:
+  level:
+    me.project.apigateway: DEBUG
+    org.springframework.cloud.gateway: INFO
+    org.springframework.web: INFO
+    org.springframework.cloud.netflix: INFO
+  file:
+    name: logs/api-gateway.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30

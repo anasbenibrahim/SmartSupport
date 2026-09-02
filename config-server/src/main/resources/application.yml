@@ -1,19 +1,81 @@
+# ============================================
+# CONFIGURATION DU CONFIG SERVER
+# ============================================
+
+# --- Configuration du serveur ---
 server:
   port: 8888
+  address: 0.0.0.0
 
+# --- Configuration Spring ---
 spring:
   application:
     name: config-server
+  
+  # Configuration du Config Server
   cloud:
     config:
       server:
+        # Utiliser un repository Git local pour les configurations
         git:
-          # Le chemin absolu vers ton dépôt Git local (attention au format file:///)
-          uri: file:///home/anas/Desktop/smart-support/smartsupport-config-repo
-          # Définit la branche par défaut à lire
-          default-label: master
+          uri: file://${user.home}/smart-support-config
+          default-label: main
+          # Chercher les fichiers dans le dossier du service
+          search-paths: '{application}'
+          # Timeout pour les opérations Git
+          timeout: 5
+          # Cloner le repo au démarrage
+          clone-on-start: true
+          # Forcer le pull à chaque requête
+          force-pull: false
+        
+        # Alternative : Utiliser un répertoire local (sans Git)
+        # native:
+        #   search-locations: file:///config-repo
+        
+        # Activer les endpoints de monitoring
+        monitor:
+          github:
+            enabled: false
+        
+        # Activer le chiffrement/déchiffrement (optionnel)
+        encrypt:
+          enabled: false
 
+# --- Configuration Eureka Client ---
 eureka:
   client:
-    serviceUrl:
+    service-url:
       defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    # Intervalle de renouvellement du bail
+    registry-fetch-interval-seconds: 5
+  
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+# --- Configuration du Monitoring ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,refresh,env
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+# --- Configuration des Logs ---
+logging:
+  level:
+    org.springframework.cloud.config: DEBUG
+    org.springframework.web: INFO
+  file:
+    name: logs/config-server.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

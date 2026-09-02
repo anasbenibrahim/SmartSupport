@@ -1,0 +1,48 @@
+2026-09-02T15:26:17.850+01:00  INFO 23769 --- [config-server] [main] m.p.c.ConfigServerApplication            : Starting ConfigServerApplication using Java 17.0.12 with PID 23769 (/home/anas/Desktop/smart-support/config-server/target/classes started by anas in /home/anas/Desktop/smart-support)
+2026-09-02T15:26:17.860+01:00  INFO 23769 --- [config-server] [main] m.p.c.ConfigServerApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-09-02T15:26:18.738+01:00  INFO 23769 --- [config-server] [main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=1d81cc1d-01e2-32a2-b06a-81068654b1d6
+2026-09-02T15:26:18.922+01:00  INFO 23769 --- [config-server] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8888 (http)
+2026-09-02T15:26:18.931+01:00  INFO 23769 --- [config-server] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-02T15:26:18.932+01:00  INFO 23769 --- [config-server] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-02T15:26:18.971+01:00  INFO 23769 --- [config-server] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1073 ms
+2026-09-02T15:26:20.071+01:00  INFO 23769 --- [config-server] [main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestClient.
+2026-09-02T15:26:20.123+01:00  WARN 23769 --- [config-server] [main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-09-02T15:26:20.128+01:00  INFO 23769 --- [config-server] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 5 endpoints beneath base path '/actuator'
+2026-09-02T15:26:20.170+01:00  INFO 23769 --- [config-server] [main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-09-02T15:26:20.189+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-09-02T15:26:20.193+01:00  INFO 23769 --- [config-server] [main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-09-02T15:26:20.201+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-09-02T15:26:20.202+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-09-02T15:26:20.202+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-09-02T15:26:20.202+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-09-02T15:26:20.202+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-09-02T15:26:20.202+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2026-09-02T15:26:20.202+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-09-02T15:26:20.997+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-09-02T15:26:21.000+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 10
+2026-09-02T15:26:21.003+01:00  INFO 23769 --- [config-server] [main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-09-02T15:26:21.007+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1788359181005 with initial instances count: 0
+2026-09-02T15:26:21.011+01:00  INFO 23769 --- [config-server] [main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application CONFIG-SERVER with eureka with status UP
+2026-09-02T15:26:21.012+01:00  INFO 23769 --- [config-server] [main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1788359181012, current=UP, previous=STARTING]
+2026-09-02T15:26:21.015+01:00  INFO 23769 --- [config-server] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:8888: registering service...
+2026-09-02T15:26:21.038+01:00  INFO 23769 --- [config-server] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8888 (http) with context path '/'
+2026-09-02T15:26:21.040+01:00  INFO 23769 --- [config-server] [main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8888
+2026-09-02T15:26:21.067+01:00  INFO 23769 --- [config-server] [main] m.p.c.ConfigServerApplication            : Started ConfigServerApplication in 3.815 seconds (process running for 4.499)
+2026-09-02T15:26:21.291+01:00  INFO 23769 --- [config-server] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_CONFIG-SERVER/192.168.1.101:config-server:8888 - registration status: 204
+2026-09-02T15:26:26.000+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-09-02T15:26:26.001+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-09-02T15:26:26.001+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-09-02T15:26:26.001+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-09-02T15:26:26.002+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-09-02T15:26:26.002+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Application version is -1: false
+2026-09-02T15:26:26.002+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-09-02T15:26:26.017+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-09-02T15:26:31.019+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-09-02T15:26:31.020+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-09-02T15:26:31.020+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-09-02T15:26:31.021+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-09-02T15:26:31.021+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-09-02T15:26:31.021+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Application version is -1: false
+2026-09-02T15:26:31.022+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-09-02T15:26:31.048+01:00  INFO 23769 --- [config-server] [DiscoveryClient-CacheRefreshExecutor-%d] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-09-02T15:31:20.204+01:00  INFO 23769 --- [config-server] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration

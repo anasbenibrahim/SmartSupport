@@ -1,0 +1,38 @@
+# ============================================
+# BOOTSTRAP CONFIGURATION (Lu en PREMIER)
+# ============================================
+
+spring:
+  application:
+    name: api-gateway  # IMPORTANT : Détermine le fichier de config à charger
+  
+  cloud:
+    config:
+      # URI du Config Server
+      uri: http://localhost:8888
+      
+      # Échouer rapidement si le Config Server est inaccessible
+      fail-fast: true
+      
+      # Configuration des retries
+      retry:
+        initial-interval: 1500  # Premier délai (ms)
+        max-attempts: 6        # Nombre maximum de tentatives
+        max-interval: 2000     # Délai maximum (ms)
+        multiplier: 1.1       # Multiplicateur pour backoff exponentiel
+      
+      # Utiliser la découverte Eureka pour trouver le Config Server
+      discovery:
+        enabled: false  # Mettre à true si vous voulez découvrir via Eureka
+        service-id: config-server
+
+# Configuration Eureka (nécessaire pour la découverte)
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
