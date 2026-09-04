@@ -21,6 +21,28 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Transactional
+    public void syncUser(UserDTO request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setFirstName(request.getFirstName());
+                    newUser.setLastName(request.getLastName());
+                    newUser.setEmail(request.getEmail());
+                    newUser.setRole(request.getRole());
+                    newUser.setActive(request.isActive());
+                    return newUser;
+                });
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setRole(request.getRole());
+        user.setActive(request.isActive());
+
+        userRepository.save(user);
+    }
+
     @Transactional(readOnly = true)
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)

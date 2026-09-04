@@ -1,10 +1,13 @@
 package me.project.authservice.service;
 
 import lombok.RequiredArgsConstructor;
+import me.project.authservice.client.UserServiceClient;
 import me.project.authservice.dto.AuthResponse;
 import me.project.authservice.dto.LoginRequest;
 import me.project.authservice.dto.RegisterRequest;
 import me.project.authservice.dto.UserDTO;
+import me.project.authservice.dto.UserSyncRequest;
+import me.project.authservice.entity.Role;
 import me.project.authservice.entity.User;
 import me.project.authservice.exception.CustomException;
 import me.project.authservice.repository.UserRepository;
@@ -26,6 +29,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserServiceClient userServiceClient;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -34,19 +38,32 @@ public class AuthService {
             throw new CustomException("Email already registered", HttpStatus.CONFLICT);
         }
 
-        // Créer le nouvel utilisateur
+        Role requestedRole = request.getRole() != null ? request.getRole() : Role.CUSTOMER;
+
         User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(me.project.authservice.entity.Role.CUSTOMER)
+                .role(requestedRole)
                 .enabled(true)
                 .build();
 
         User savedUser = userRepository.save(user);
 
-        // Générer les tokens
+        try {
+            userServiceClient.syncUser(UserSyncRequest.builder()
+                    .id(savedUser.getId())
+                    .firstName(savedUser.getFirstName())
+                    .lastName(savedUser.getLastName())
+                    .email(savedUser.getEmail())
+                    .role(savedUser.getRole().name())
+                    .active(savedUser.isEnabled())
+                    .build());
+        } catch (Exception ignored) {
+            // Safety: auth registration still succeeds even if user-service sync is temporarily unavailable.
+        }
+
         String accessToken = jwtService.generateToken(savedUser);
         String refreshToken = jwtService.generateRefreshToken(savedUser);
 

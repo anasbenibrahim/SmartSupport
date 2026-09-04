@@ -40,6 +40,8 @@ function App() {
   const isAgent = role === 'SUPPORT_AGENT'
   const canManageUsers = isAdmin || isAgent
   const displayName = session?.user ? `${session.user.firstName} ${session.user.lastName}` : ''
+  const spaceTheme = isAdmin ? 'admin' : isAgent ? 'support' : 'customer'
+  const roleLabel = isAdmin ? 'Admin workspace' : isAgent ? 'Support workspace' : 'Customer workspace'
 
   useEffect(() => {
     if (session) localStorage.setItem('smart-support-session', JSON.stringify(session))
@@ -82,8 +84,9 @@ function App() {
         ? `/api/users/search?query=${encodeURIComponent(search)}`
         : `/api/users/role/${group}`
       const response = await api(path, {}, session.accessToken)
-      setUsers(response.data || [])
-      setNotice(`${response.data?.length || 0} users loaded.`)
+      const loadedUsers = Array.isArray(response.data) ? response.data : []
+      setUsers(loadedUsers.filter(user => user && user.role === group))
+      setNotice(`${loadedUsers.filter(user => user && user.role === group).length} ${group.toLowerCase().replace('_', ' ')} users loaded.`)
     } catch (error) { setNotice(error.message) } finally { setLoading(false) }
   }
 
@@ -114,9 +117,12 @@ function App() {
 
   const profile = selectedUser || session.user
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${spaceTheme}`}>
       <aside className="sidebar">
-        <div className="brand"><span className="brand-mark">S</span><span>smart support</span></div>
+        <div className="brand-row">
+          <div className="brand"><span className="brand-mark">S</span><span>smart support</span></div>
+          <span className="space-pill">{roleLabel}</span>
+        </div>
         <div className="workspace-label">OPERATIONS CONSOLE</div>
         <nav>{navItems.map(item => <button className={activeView === item.id ? 'nav-item active' : 'nav-item'} key={item.id} onClick={() => { setActiveView(item.id); if (item.id === 'profile') fetchUser() }}><span>{item.label}</span><small>{item.note}</small></button>)}</nav>
         <div className="sidebar-bottom"><div className="status-dot"><i /> Services online</div><button className="logout" onClick={logout}>Sign out <span>↗</span></button></div>

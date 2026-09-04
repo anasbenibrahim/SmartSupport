@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/api/users/public/**").permitAll()
+                        .requestMatchers("/api/users/public/**", "/api/users/sync").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

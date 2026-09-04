@@ -19,6 +19,12 @@ public class UserController {
 
     private final UserService userService;
 
+    @PostMapping("/sync")
+    public ResponseEntity<Void> syncUser(@RequestBody UserDTO request) {
+        userService.syncUser(request);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDTO>> getUserById(@PathVariable Long id) {
         UserDTO user = userService.getUserById(id);

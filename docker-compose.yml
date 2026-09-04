@@ -154,6 +154,68 @@ services:
     networks:
       - microservices-net
 
+  notification-postgres:
+    image: postgres:latest
+    container_name: notification-postgres
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: notification_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d notification_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - microservices-net
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "4040:4040"
+    depends_on:
+      notification-postgres:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    environment:
+      - SERVER_PORT=4040
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://notification-postgres:5432/notification_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - EUREKA_INSTANCE_HOSTNAME=notification-service
+      - SPRING_CLOUD_CONFIG_ENABLED=true
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:4040/actuator/health | grep -q 'UP'"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - microservices-net
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: smart-support-client
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8090
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      api-gateway:
+        condition: service_started
+    networks:
+      - microservices-net
+
 networks:
   microservices-net:
     driver: bridge
