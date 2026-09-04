@@ -27,6 +27,11 @@ jwt:
   expiration: ${JWT_EXPIRATION:3600000}
   refresh-expiration: ${JWT_REFRESH_EXPIRATION:86400000}
 
+app:
+  admin:
+    email: ${ADMIN_EMAIL:admin@smartsupport.local}
+    password: ${ADMIN_PASSWORD:Admin@12345}
+
 # Configuration Eureka
 eureka:
   client:

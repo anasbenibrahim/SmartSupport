@@ -110,6 +110,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/auth_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
+      - ADMIN_EMAIL=admin@smartsupport.local
+      - ADMIN_PASSWORD=Admin@12345
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery-service:8761/eureka/
       - EUREKA_INSTANCE_HOSTNAME=auth-service
       - SPRING_CLOUD_CONFIG_ENABLED=true
