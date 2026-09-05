@@ -32,6 +32,9 @@ app:
     email: ${ADMIN_EMAIL:admin@smartsupport.local}
     password: ${ADMIN_PASSWORD:Admin@12345}
 
+notification:
+  internal-secret: ${NOTIFICATION_INTERNAL_SECRET:local-notification-secret}
+
 # Configuration Eureka
 eureka:
   client:

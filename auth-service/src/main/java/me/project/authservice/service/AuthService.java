@@ -1,10 +1,14 @@
 package me.project.authservice.service;
 
 import lombok.RequiredArgsConstructor;
+import me.project.authservice.client.NotificationServiceClient;
 import me.project.authservice.client.UserServiceClient;
 import me.project.authservice.dto.AuthResponse;
+import me.project.authservice.dto.CreateSupportRequest;
+import me.project.authservice.dto.EmailRequest;
 import me.project.authservice.dto.LoginRequest;
 import me.project.authservice.dto.RegisterRequest;
+import me.project.authservice.dto.SupportCreatedResponse;
 import me.project.authservice.dto.UserDTO;
 import me.project.authservice.dto.UserSyncRequest;
 import me.project.authservice.entity.Role;
@@ -21,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import io.jsonwebtoken.JwtException;
 
+import java.security.SecureRandom;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -30,6 +36,10 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserServiceClient userServiceClient;
+    private final NotificationServiceClient notificationServiceClient;
+
+    private static final String PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789@$!%*?&";
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -38,14 +48,12 @@ public class AuthService {
             throw new CustomException("Email already registered", HttpStatus.CONFLICT);
         }
 
-        Role requestedRole = request.getRole() != null ? request.getRole() : Role.CUSTOMER;
-
         User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(requestedRole)
+                .role(Role.CUSTOMER)
                 .enabled(true)
                 .build();
 
@@ -68,6 +76,56 @@ public class AuthService {
         String refreshToken = jwtService.generateRefreshToken(savedUser);
 
         return buildAuthResponse(savedUser, accessToken, refreshToken);
+    }
+
+    @Transactional
+    public SupportCreatedResponse createSupport(CreateSupportRequest request, String internalSecret) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new CustomException("Email already registered", HttpStatus.CONFLICT);
+        }
+
+        String generatedPassword = generatePassword();
+        User support = userRepository.save(User.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(generatedPassword))
+                .role(Role.SUPPORT_AGENT)
+                .enabled(true)
+                .build());
+
+        try {
+            userServiceClient.syncUser(UserSyncRequest.builder()
+                    .id(support.getId()).firstName(support.getFirstName()).lastName(support.getLastName())
+                    .email(support.getEmail()).role(Role.SUPPORT_AGENT.name()).active(true).build());
+        } catch (Exception exception) {
+            throw new CustomException("Support account created but user profile synchronization failed", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        boolean emailSent = true;
+        try {
+            notificationServiceClient.sendEmail(internalSecret, new EmailRequest(
+                    support.getEmail(), "Your SmartSupport support account",
+                    "Hello " + support.getFirstName() + ",\n\n"
+                            + "Your SmartSupport support account has been created by an administrator.\n\n"
+                            + "Email: " + support.getEmail() + "\n"
+                            + "Temporary password: " + generatedPassword + "\n\n"
+                            + "Please change this password after your first login.\n\nSmartSupport Team"));
+        } catch (Exception exception) {
+            emailSent = false;
+        }
+
+        return SupportCreatedResponse.builder().id(support.getId()).firstName(support.getFirstName())
+                .lastName(support.getLastName()).email(support.getEmail()).role(Role.SUPPORT_AGENT.name())
+                .emailSent(emailSent).build();
+    }
+
+    private String generatePassword() {
+        StringBuilder password = new StringBuilder(14);
+        for (int index = 0; index < 14; index++) {
+            password.append(PASSWORD_CHARS.charAt(RANDOM.nextInt(PASSWORD_CHARS.length())));
+        }
+        return password.toString();
     }
 
     public AuthResponse login(LoginRequest request) {

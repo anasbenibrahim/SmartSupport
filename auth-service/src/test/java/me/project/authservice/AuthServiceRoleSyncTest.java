@@ -43,7 +43,7 @@ class AuthServiceRoleSyncTest {
     private AuthService authService;
 
     @Test
-    void shouldKeepSupportAgentRoleAndSyncToUserService() {
+    void shouldForcePublicRegistrationToCustomerAndSyncToUserService() {
         RegisterRequest request = new RegisterRequest();
         request.setFirstName("Support");
         request.setLastName("Agent");
@@ -64,7 +64,7 @@ class AuthServiceRoleSyncTest {
 
         var response = authService.register(request);
 
-        assertEquals(Role.SUPPORT_AGENT, response.getUser().getRole());
+        assertEquals(Role.CUSTOMER, response.getUser().getRole());
         verify(userServiceClient).syncUser(any());
     }
 }
