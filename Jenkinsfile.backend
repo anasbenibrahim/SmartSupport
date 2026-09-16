@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SONAR_HOST_URL = 'http://sonarqube:9000'
+        SONAR_HOST_URL = 'http://localhost:9000'
         SERVICES = 'discovery-service config-server api-gateway auth-service user-service ticket-service notification-service'
     }
 
