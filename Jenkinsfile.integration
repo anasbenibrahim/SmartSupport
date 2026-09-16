@@ -2,14 +2,6 @@ pipeline {
     agent any
 
     stages {
-
-        stage('Checkout Project') {
-            steps {
-                git branch: 'master',
-                    url: 'https://github.com/anasbenibrahim/SmartSupport.git'
-            }
-        }
-
         stage('Build Docker Images') {
             steps {
                 sh '''
