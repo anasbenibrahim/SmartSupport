@@ -22,7 +22,9 @@ pipeline {
                         echo "=============================="
 
                         cd "$service"
+
                         mvn clean package -DskipTests
+
                         cd ..
                     done
                 '''
@@ -43,18 +45,25 @@ pipeline {
                         echo "=============================="
 
                         cd "$service"
+
                         mvn test
+
                         cd ..
                     done
                 '''
             }
         }
 
-        stage('Sonar') {
+        stage('SonarQube') {
             steps {
                 echo 'Analyse SonarQube des microservices Spring Boot'
 
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                withCredentials([
+                    string(
+                        credentialsId: 'sonar-token',
+                        variable: 'SONAR_TOKEN'
+                    )
+                ]) {
                     sh '''
                         set -e
 
@@ -66,11 +75,12 @@ pipeline {
 
                             cd "$service"
 
-                            mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                                -Dsonar.projectKey=smart_support_${service} \
-                                -Dsonar.projectName="smart_support - ${service}" \
-                                -Dsonar.host.url=${SONAR_HOST_URL} \
-                                -Dsonar.token=${SONAR_TOKEN}
+                            mvn clean verify \
+                                org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar \
+                                -Dsonar.projectKey="smart_support_${service}" \
+                                -Dsonar.projectName="smart_support_${service}" \
+                                -Dsonar.host.url="$SONAR_HOST_URL" \
+                                -Dsonar.token="$SONAR_TOKEN"
 
                             cd ..
                         done
@@ -78,7 +88,6 @@ pipeline {
                 }
             }
         }
-
     }
 
     post {
