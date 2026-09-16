@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        SONAR_HOST_URL = 'http://sonarqube:9000'
+        SERVICES = 'discovery-service config-server api-gateway auth-service user-service ticket-service notification-service'
+    }
+
     stages {
 
         stage('Build Backend') {
@@ -10,23 +15,14 @@ pipeline {
                 sh '''
                     set -e
 
-                    for service in \
-                        discovery-service \
-                        config-server \
-                        api-gateway \
-                        auth-service \
-                        user-service \
-                        ticket-service \
-                        notification-service
+                    for service in $SERVICES
                     do
                         echo "=============================="
                         echo "Building $service"
                         echo "=============================="
 
                         cd "$service"
-
                         mvn clean package -DskipTests
-
                         cd ..
                     done
                 '''
@@ -40,23 +36,14 @@ pipeline {
                 sh '''
                     set -e
 
-                    for service in \
-                        discovery-service \
-                        config-server \
-                        api-gateway \
-                        auth-service \
-                        user-service \
-                        ticket-service \
-                        notification-service
+                    for service in $SERVICES
                     do
                         echo "=============================="
                         echo "Testing $service"
                         echo "=============================="
 
                         cd "$service"
-
                         mvn test
-
                         cd ..
                     done
                 '''
@@ -65,20 +52,30 @@ pipeline {
 
         stage('Sonar') {
             steps {
-                echo 'Sonar Spring Boot'
+                echo 'Analyse SonarQube des microservices Spring Boot'
 
-                sh '''
-                    set -e
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        set -e
 
-                    mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                    -Dsonar.projectKey=smart_support \
-                    -Dsonar.projectName='smart_support' \
-                    -Dsonar.host.url=http://localhost:9000 \
-                    -Dsonar.token=sqp_a234a8429ca5ef11d33c1f9638489be08fd7e0cb
+                        for service in $SERVICES
+                        do
+                            echo "=============================="
+                            echo "Sonar analysis: $service"
+                            echo "=============================="
 
-                        cd ..
-                    done
-                '''
+                            cd "$service"
+
+                            mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                                -Dsonar.projectKey=smart_support_${service} \
+                                -Dsonar.projectName="smart_support - ${service}" \
+                                -Dsonar.host.url=${SONAR_HOST_URL} \
+                                -Dsonar.token=${SONAR_TOKEN}
+
+                            cd ..
+                        done
+                    '''
+                }
             }
         }
 
