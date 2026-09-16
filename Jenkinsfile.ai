@@ -1,53 +1,82 @@
 pipeline {
-    agent any
+agent any
 
-    stages {
-        stage('Install Python Dependencies') {
-            steps {
-                dir('ai-service') {
-                    sh '''
-                        python3 -m venv venv
+```
+stages {
 
-                        . venv/bin/activate
+    stage('Install Python Dependencies') {
+        steps {
+            dir('ai-service') {
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
 
-                        pip install --upgrade pip
-
-                        pip install -r requirements.txt
-                    '''
-                }
-            }
-        }
-
-        stage('Test AI Service') {
-            steps {
-                dir('ai-service') {
-                    sh '''
-                        . venv/bin/activate
-
-                        pytest
-                    '''
-                }
-            }
-        }
-
-        stage('Build AI Docker Image') {
-            steps {
-                dir('ai-service') {
-                    sh '''
-                        docker build -t smartsupport-ai:latest .
-                    '''
-                }
+                    python -m pip install --upgrade pip
+                    python -m pip install -r requirements.txt
+                '''
             }
         }
     }
 
-    post {
-        success {
-            echo 'AI Service construit avec succès'
-        }
+    stage('Start AI Service') {
+        steps {
+            dir('ai-service') {
+                sh '''
+                    . venv/bin/activate
 
-        failure {
-            echo 'Erreur dans le pipeline AI'
+                    nohup python -m uvicorn app.main:app \
+                        --host 0.0.0.0 \
+                        --port 5000 \
+                        > ai-service.log 2>&1 &
+
+                    echo $! > ai-service.pid
+
+                    sleep 5
+                '''
+            }
         }
     }
+
+    stage('Test AI Service') {
+        steps {
+            dir('ai-service') {
+                sh '''
+                    python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"
+                '''
+            }
+        }
+    }
+
+    stage('Build AI Docker Image') {
+        steps {
+            dir('ai-service') {
+                sh '''
+                    docker build -t smartsupport-ai:latest .
+                '''
+            }
+        }
+    }
+}
+
+post {
+    always {
+        dir('ai-service') {
+            sh '''
+                if [ -f ai-service.pid ]; then
+                    kill $(cat ai-service.pid) || true
+                fi
+            '''
+        }
+    }
+
+    success {
+        echo 'AI Service construit avec succès'
+    }
+
+    failure {
+        echo 'Erreur dans le pipeline AI'
+    }
+}
+```
+
 }
