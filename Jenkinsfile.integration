@@ -3,12 +3,51 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Project') {
             steps {
                 git branch: 'master',
-                    url: 'https://github.com/anasbenibrahim/smart-support.git'
+                    url: 'https://github.com/anasbenibrahim/SmartSupport.git'
             }
         }
 
+        stage('Build Docker Images') {
+            steps {
+                sh '''
+                    docker compose build
+                '''
+            }
+        }
+
+        stage('Start Application') {
+            steps {
+                sh '''
+                    docker compose up -d
+                '''
+            }
+        }
+
+        stage('Check Containers') {
+            steps {
+                sh '''
+                    docker compose ps
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            sh '''
+                docker compose logs --tail=100 || true
+            '''
+        }
+
+        success {
+            echo 'Integration pipeline terminé avec succès'
+        }
+
+        failure {
+            echo 'Erreur dans le pipeline Integration'
+        }
     }
 }
