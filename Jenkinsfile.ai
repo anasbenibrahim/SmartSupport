@@ -2,16 +2,6 @@ pipeline {
     agent any
 
     stages {
-
-        stage('Checkout AI Service') {
-            steps {
-                echo 'Checkout du service AI'
-
-                git branch: 'master',
-                    url: 'https://github.com/anasbenibrahim/SmartSupport.git'
-            }
-        }
-
         stage('Install Python Dependencies') {
             steps {
                 dir('ai-service') {
