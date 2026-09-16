@@ -10,9 +10,20 @@ pipeline {
             steps {
                 checkout([$class: 'GitSCM',
                     branches: scm.branches,
-                    extensions: [[$class: 'CloneOption', shallow: true, depth: 1, noTags: true, timeout: 20]],
+                    extensions: [
+                        [$class: 'CloneOption', shallow: true, depth: 1, noTags: true, timeout: 20],
+                        [$class: 'SubmoduleOption', disableSubmodules: true]
+                    ],
                     userRemoteConfigs: scm.userRemoteConfigs
                 ])
+            }
+        }
+
+        stage('Cleanup Previous Run') {
+            steps {
+                sh '''
+                    docker compose down --remove-orphans || true
+                '''
             }
         }
 
@@ -53,11 +64,9 @@ pipeline {
                 }
             }
         }
-
         success {
             echo 'Integration pipeline terminé avec succès'
         }
-
         failure {
             echo 'Erreur dans le pipeline Integration'
         }
