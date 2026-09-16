@@ -1,1 +1,55 @@
+pipeline {
+    agent any
 
+    stages {
+
+        stage('Checkout Frontend') {
+            steps {
+                echo 'Checkout du frontend React'
+
+                git branch: 'master',
+                    url: 'https://github.com/anasbenibrahim/SmartSupport.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                dir('client') {
+                    sh '''
+                        npm install
+                    '''
+                }
+            }
+        }
+
+        stage('Test Frontend') {
+            steps {
+                dir('client') {
+                    sh '''
+                        npm test -- --watchAll=false
+                    '''
+                }
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                dir('client') {
+                    sh '''
+                        npm run build
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Frontend React construit avec succès'
+        }
+
+        failure {
+            echo 'Erreur dans le pipeline Frontend'
+        }
+    }
+}
