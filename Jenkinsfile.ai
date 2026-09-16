@@ -1,6 +1,7 @@
 pipeline {
 agent any
 
+
 stages {
 
     stage('Install Python Dependencies') {
@@ -23,9 +24,7 @@ stages {
                 sh '''
                     . venv/bin/activate
 
-                    nohup python -m uvicorn app.main:app \
-                        --host 0.0.0.0 \
-                        --port 5000 \
+                    nohup python app/main.py \
                         > ai-service.log 2>&1 &
 
                     echo $! > ai-service.pid
@@ -40,7 +39,11 @@ stages {
         steps {
             dir('ai-service') {
                 sh '''
+                    . venv/bin/activate
+
                     python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"
+
+                    echo "AI Service /health OK"
                 '''
             }
         }
@@ -62,7 +65,7 @@ post {
         dir('ai-service') {
             sh '''
                 if [ -f ai-service.pid ]; then
-                    kill $(cat ai-service.pid) || true
+                    kill $(cat ai-service.pid) 2>/dev/null || true
                 fi
             '''
         }
