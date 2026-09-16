@@ -62,40 +62,6 @@ pipeline {
                 '''
             }
         }
-
-        stage('Build Docker Images') {
-            steps {
-                echo 'Build des images Docker des microservices'
-
-                sh '''
-                    set -e
-
-                    for service in \
-                        discovery-service \
-                        config-server \
-                        api-gateway \
-                        auth-service \
-                        user-service \
-                        ticket-service \
-                        notification-service
-                    do
-                        echo "=============================="
-                        echo "Docker build: $service"
-                        echo "=============================="
-
-                        docker build \
-                            -t "smartsupport-$service:latest" \
-                            "$service"
-                    done
-
-                    echo "======================================"
-                    echo "Toutes les images Docker sont créées"
-                    echo "======================================"
-
-                    docker images | grep smartsupport
-                '''
-            }
-        }
     }
 
     post {
