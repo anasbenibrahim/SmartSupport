@@ -94,7 +94,7 @@ pipeline {
         )
         string(
             name: 'BRANCH',
-            defaultValue: 'main',
+            defaultValue: 'master',
             description: 'Branche à builder'
         )
     }
@@ -121,7 +121,7 @@ pipeline {
                             [$class: 'CloneOption', depth: 1, noTags: true, shallow: true]
                         ],
                         userRemoteConfigs: [[
-                            url: 'https://github.com/TON_USERNAME/smart-support.git',
+                            url: 'https://github.com/anasbenibrahim/smart-support.git',
                             credentialsId: 'github-credentials'
                         ]]
                     ])
