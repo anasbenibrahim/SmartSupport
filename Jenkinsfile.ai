@@ -99,24 +99,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Build AI Docker Image') {
-            steps {
-                dir('ai-service') {
-                    sh '''
-                        set -e
-
-                        echo "=== Building Docker image ==="
-
-                        docker build -t smartsupport-ai:latest .
-
-                        echo "================================"
-                        echo "Docker image built successfully"
-                        echo "================================"
-                    '''
-                }
-            }
-        }
     }
 
     post {
