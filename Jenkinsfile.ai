@@ -1,1 +1,63 @@
+pipeline {
+    agent any
 
+    stages {
+
+        stage('Checkout AI Service') {
+            steps {
+                echo 'Checkout du service AI'
+
+                git branch: 'master',
+                    url: 'https://github.com/anasbenibrahim/SmartSupport.git'
+            }
+        }
+
+        stage('Install Python Dependencies') {
+            steps {
+                dir('ai-service') {
+                    sh '''
+                        python3 -m venv venv
+
+                        . venv/bin/activate
+
+                        pip install --upgrade pip
+
+                        pip install -r requirements.txt
+                    '''
+                }
+            }
+        }
+
+        stage('Test AI Service') {
+            steps {
+                dir('ai-service') {
+                    sh '''
+                        . venv/bin/activate
+
+                        pytest
+                    '''
+                }
+            }
+        }
+
+        stage('Build AI Docker Image') {
+            steps {
+                dir('ai-service') {
+                    sh '''
+                        docker build -t smartsupport-ai:latest .
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'AI Service construit avec succès'
+        }
+
+        failure {
+            echo 'Erreur dans le pipeline AI'
+        }
+    }
+}
