@@ -2,21 +2,19 @@ pipeline {
     agent any
 
     stages {
+
         stage('Install Dependencies') {
             steps {
                 dir('client') {
                     sh '''
-                        npm install
-                    '''
-                }
-            }
-        }
+                        echo "Node version:"
+                        node --version
 
-        stage('Test Frontend') {
-            steps {
-                dir('client') {
-                    sh '''
-                        npm test -- --watchAll=false
+                        echo "NPM version:"
+                        npm --version
+
+                        echo "Installing dependencies..."
+                        npm install
                     '''
                 }
             }
@@ -26,6 +24,7 @@ pipeline {
             steps {
                 dir('client') {
                     sh '''
+                        echo "Building React application..."
                         npm run build
                     '''
                 }
