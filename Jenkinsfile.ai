@@ -37,7 +37,7 @@ pipeline {
                         rm -f ai-service.pid
                         rm -f ai-service.log
 
-                        nohup ./venv/bin/python app/main.py \
+                        nohup ./venv/bin/python app.py \
                             > ai-service.log 2>&1 &
 
                         echo $! > ai-service.pid
@@ -92,7 +92,7 @@ pipeline {
                         cat ai-service.log || true
 
                         echo "=== Process status ==="
-                        ps aux | grep '[p]ython.*app/main.py' || true
+                        ps aux | grep '[p]ython.*app.py' || true
 
                         exit 1
                     '''
