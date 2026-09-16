@@ -2,16 +2,6 @@ pipeline {
     agent any
 
     stages {
-
-        stage('Checkout Frontend') {
-            steps {
-                echo 'Checkout du frontend React'
-
-                git branch: 'master',
-                    url: 'https://github.com/anasbenibrahim/SmartSupport.git'
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 dir('client') {
