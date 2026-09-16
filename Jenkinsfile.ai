@@ -1,84 +1,150 @@
 pipeline {
-agent any
+    agent any
 
+    stages {
 
-stages {
+        stage('Install Python Dependencies') {
+            steps {
+                dir('ai-service') {
+                    sh '''
+                        set -e
 
-    stage('Install Python Dependencies') {
-        steps {
-            dir('ai-service') {
-                sh '''
-                    python3 -m venv venv
-                    . venv/bin/activate
+                        echo "=== Creating virtual environment ==="
+                        python3 -m venv venv
 
-                    python -m pip install --upgrade pip
-                    python -m pip install -r requirements.txt
-                '''
+                        echo "=== Installing dependencies ==="
+                        ./venv/bin/python -m pip install --upgrade pip
+                        ./venv/bin/python -m pip install -r requirements.txt
+
+                        echo "=== Python version ==="
+                        ./venv/bin/python --version
+
+                        echo "=== Flask version ==="
+                        ./venv/bin/python -c "import flask; print(flask.__version__)"
+                    '''
+                }
+            }
+        }
+
+        stage('Start AI Service') {
+            steps {
+                dir('ai-service') {
+                    sh '''
+                        set -e
+
+                        echo "=== Starting AI Service ==="
+
+                        rm -f ai-service.pid
+                        rm -f ai-service.log
+
+                        nohup ./venv/bin/python app/main.py \
+                            > ai-service.log 2>&1 &
+
+                        echo $! > ai-service.pid
+
+                        echo "AI Service PID: $(cat ai-service.pid)"
+
+                        sleep 2
+
+                        echo "=== Process status ==="
+
+                        if kill -0 $(cat ai-service.pid) 2>/dev/null; then
+                            echo "AI Service process is running"
+                        else
+                            echo "ERROR: AI Service process stopped"
+                            echo "=== AI Service log ==="
+                            cat ai-service.log
+                            exit 1
+                        fi
+                    '''
+                }
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                dir('ai-service') {
+                    sh '''
+                        set -e
+
+                        echo "=== Waiting for AI Service ==="
+
+                        for i in $(seq 1 15)
+                        do
+                            echo "Health check attempt $i/15"
+
+                            if ./venv/bin/python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/health', timeout=2)" 2>/dev/null
+                            then
+                                echo "================================"
+                                echo "AI Service /health OK"
+                                echo "================================"
+                                exit 0
+                            fi
+
+                            sleep 1
+                        done
+
+                        echo "================================"
+                        echo "ERROR: AI Service is not healthy"
+                        echo "================================"
+
+                        echo "=== AI Service log ==="
+                        cat ai-service.log || true
+
+                        echo "=== Process status ==="
+                        ps aux | grep '[p]ython.*app/main.py' || true
+
+                        exit 1
+                    '''
+                }
+            }
+        }
+
+        stage('Build AI Docker Image') {
+            steps {
+                dir('ai-service') {
+                    sh '''
+                        set -e
+
+                        echo "=== Building Docker image ==="
+
+                        docker build -t smartsupport-ai:latest .
+
+                        echo "================================"
+                        echo "Docker image built successfully"
+                        echo "================================"
+                    '''
+                }
             }
         }
     }
 
-    stage('Start AI Service') {
-        steps {
+    post {
+        always {
             dir('ai-service') {
                 sh '''
-                    . venv/bin/activate
+                    echo "=== Cleaning AI Service ==="
 
-                    nohup python app/main.py \
-                        > ai-service.log 2>&1 &
+                    if [ -f ai-service.pid ]; then
+                        PID=$(cat ai-service.pid)
 
-                    echo $! > ai-service.pid
-
-                    sleep 5
+                        if kill -0 "$PID" 2>/dev/null; then
+                            kill "$PID" 2>/dev/null || true
+                            echo "AI Service stopped"
+                        else
+                            echo "AI Service already stopped"
+                        fi
+                    fi
                 '''
             }
         }
-    }
 
-    stage('Test AI Service') {
-        steps {
-            dir('ai-service') {
-                sh '''
-                    . venv/bin/activate
+        success {
+            echo 'AI Service pipeline completed successfully'
+        }
 
-                    python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"
-
-                    echo "AI Service /health OK"
-                '''
-            }
+        failure {
+            echo 'AI Service pipeline failed'
         }
     }
-
-    stage('Build AI Docker Image') {
-        steps {
-            dir('ai-service') {
-                sh '''
-                    docker build -t smartsupport-ai:latest .
-                '''
-            }
-        }
-    }
-}
-
-post {
-    always {
-        dir('ai-service') {
-            sh '''
-                if [ -f ai-service.pid ]; then
-                    kill $(cat ai-service.pid) 2>/dev/null || true
-                fi
-            '''
-        }
-    }
-
-    success {
-        echo 'AI Service construit avec succès'
-    }
-
-    failure {
-        echo 'Erreur dans le pipeline AI'
-    }
-}
-
-
 }
