@@ -62,6 +62,26 @@ pipeline {
                 '''
             }
         }
+
+        stage('Sonar') {
+            steps {
+                echo 'Sonar Spring Boot'
+
+                sh '''
+                    set -e
+
+                    mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                    -Dsonar.projectKey=smart_support \
+                    -Dsonar.projectName='smart_support' \
+                    -Dsonar.host.url=http://localhost:9000 \
+                    -Dsonar.token=sqp_a234a8429ca5ef11d33c1f9638489be08fd7e0cb
+
+                        cd ..
+                    done
+                '''
+            }
+        }
+
     }
 
     post {
