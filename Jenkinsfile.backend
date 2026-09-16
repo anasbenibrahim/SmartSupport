@@ -1,1 +1,77 @@
+pipeline {
+    agent any
 
+    stages {
+
+        stage('Checkout Backend') {
+            steps {
+                echo 'Checkout du projet SmartSupport'
+
+                git branch: 'master',
+                    url: 'https://github.com/anasbenibrahim/SmartSupport.git'
+            }
+        }
+
+        stage('Build Backend') {
+            steps {
+                echo 'Build des microservices Spring Boot'
+
+                sh '''
+                    for service in \
+                        discovery-service \
+                        config-server \
+                        api-gateway \
+                        auth-service \
+                        user-service \
+                        ticket-service \
+                        notification-service
+                    do
+                        echo "Building $service"
+
+                        cd $service
+
+                        mvn clean package -DskipTests
+
+                        cd ..
+                    done
+                '''
+            }
+        }
+
+        stage('Tests Backend') {
+            steps {
+                echo 'Tests unitaires Spring Boot'
+
+                sh '''
+                    for service in \
+                        discovery-service \
+                        config-server \
+                        api-gateway \
+                        auth-service \
+                        user-service \
+                        ticket-service \
+                        notification-service
+                    do
+                        echo "Testing $service"
+
+                        cd $service
+
+                        mvn test
+
+                        cd ..
+                    done
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Backend pipeline terminé avec succès'
+        }
+
+        failure {
+            echo 'Erreur dans le pipeline Backend'
+        }
+    }
+}
