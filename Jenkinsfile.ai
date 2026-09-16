@@ -1,7 +1,6 @@
 pipeline {
 agent any
 
-```
 stages {
 
     stage('Install Python Dependencies') {
@@ -77,6 +76,6 @@ post {
         echo 'Erreur dans le pipeline AI'
     }
 }
-```
+
 
 }
