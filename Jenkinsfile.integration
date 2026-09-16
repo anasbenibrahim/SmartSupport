@@ -1,7 +1,21 @@
 pipeline {
     agent any
 
+    options {
+        timeout(time: 30, unit: 'MINUTES')
+    }
+
     stages {
+        stage('Checkout') {
+            steps {
+                checkout([$class: 'GitSCM',
+                    branches: scm.branches,
+                    extensions: [[$class: 'CloneOption', shallow: true, depth: 1, noTags: true, timeout: 20]],
+                    userRemoteConfigs: scm.userRemoteConfigs
+                ])
+            }
+        }
+
         stage('Build Docker Images') {
             steps {
                 sh '''
@@ -29,9 +43,15 @@ pipeline {
 
     post {
         always {
-            sh '''
-                docker compose logs --tail=100 || true
-            '''
+            script {
+                if (fileExists('docker-compose.yml')) {
+                    sh '''
+                        docker compose logs --tail=100 || true
+                    '''
+                } else {
+                    echo 'docker-compose.yml not found — skipping logs (checkout likely failed)'
+                }
+            }
         }
 
         success {
