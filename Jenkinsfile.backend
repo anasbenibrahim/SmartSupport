@@ -3,20 +3,13 @@ pipeline {
 
     stages {
 
-        stage('Checkout Backend') {
-            steps {
-                echo 'Checkout du projet SmartSupport'
-
-                git branch: 'master',
-                    url: 'https://github.com/anasbenibrahim/SmartSupport.git'
-            }
-        }
-
         stage('Build Backend') {
             steps {
                 echo 'Build des microservices Spring Boot'
 
                 sh '''
+                    set -e
+
                     for service in \
                         discovery-service \
                         config-server \
@@ -26,9 +19,11 @@ pipeline {
                         ticket-service \
                         notification-service
                     do
+                        echo "=============================="
                         echo "Building $service"
+                        echo "=============================="
 
-                        cd $service
+                        cd "$service"
 
                         mvn clean package -DskipTests
 
@@ -43,6 +38,8 @@ pipeline {
                 echo 'Tests unitaires Spring Boot'
 
                 sh '''
+                    set -e
+
                     for service in \
                         discovery-service \
                         config-server \
@@ -52,9 +49,11 @@ pipeline {
                         ticket-service \
                         notification-service
                     do
+                        echo "=============================="
                         echo "Testing $service"
+                        echo "=============================="
 
-                        cd $service
+                        cd "$service"
 
                         mvn test
 
