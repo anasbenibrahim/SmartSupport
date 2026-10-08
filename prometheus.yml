@@ -46,9 +46,7 @@ scrape_configs:
     static_configs:
       - targets: ["ticket-service:3032"]
 
-  # ai-service is Python/Flask (per its healthcheck) — add a job here only
-  # if it exposes a /metrics endpoint via prometheus_client or similar.
-  # - job_name: "ai-service"
-  #   metrics_path: /metrics
-  #   static_configs:
-  #     - targets: ["ai-service:5000"]
+  - job_name: "ai-service"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["ai-service:5000"]

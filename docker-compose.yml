@@ -43,6 +43,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    environment:
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8761/eureka/apps >/dev/null"]
       interval: 5s
@@ -66,6 +68,7 @@ services:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery-service:8761/eureka/
       - EUREKA_INSTANCE_HOSTNAME=config-server
       - CONFIG_REPO_PATH=/config-repo
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8888/api-gateway/default >/dev/null"]
       interval: 5s
@@ -89,6 +92,7 @@ services:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery-service:8761/eureka/
       - EUREKA_INSTANCE_HOSTNAME=api-gateway
       - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
     networks:
       - microservices-net
 
@@ -118,6 +122,7 @@ services:
       - EUREKA_INSTANCE_HOSTNAME=auth-service
       - SPRING_CLOUD_CONFIG_ENABLED=true
       - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health | grep -q 'UP'"]
       interval: 5s
@@ -149,6 +154,7 @@ services:
       - EUREKA_INSTANCE_HOSTNAME=user-service
       - SPRING_CLOUD_CONFIG_ENABLED=true
       - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3031/actuator/health | grep -q 'UP'"]
       interval: 5s
@@ -202,6 +208,7 @@ services:
       - EUREKA_INSTANCE_HOSTNAME=notification-service
       - SPRING_CLOUD_CONFIG_ENABLED=true
       - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:4040/actuator/health | grep -q 'UP'"]
       interval: 5s
@@ -252,6 +259,7 @@ services:
       - EUREKA_INSTANCE_HOSTNAME=ticket-service
       - SPRING_CLOUD_CONFIG_ENABLED=true
       - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3032/actuator/health | grep -q 'UP'"]
       interval: 5s
@@ -268,6 +276,7 @@ services:
     environment:
       - PORT=5000
       - WORKERS=2
+      - PROMETHEUS_MULTIPROC_DIR=/tmp/prometheus-multiproc
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:5000/health')\""]
       interval: 10s
@@ -319,6 +328,8 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     depends_on:
       - prometheus
     networks:

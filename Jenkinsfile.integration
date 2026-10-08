@@ -22,7 +22,12 @@ pipeline {
         stage('Cleanup Previous Run') {
             steps {
                 sh '''
+                    set -e
                     docker compose down --remove-orphans || true
+
+                    # Remove stale containers created by previous runs
+                    docker rm -f prometheus grafana || true
+                    docker rm -f ai-service auth-service user-service ticket-service notification-service api-gateway config-server discovery-service client postgres user-postgres notification-postgres ticket-postgres sonarqube-postgres sonarqube || true
                 '''
             }
         }

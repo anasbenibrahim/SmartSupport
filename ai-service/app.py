@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import logging
+import os
 import pickle
+import time
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from flask import Flask, jsonify, request
+from flask import Flask, Response, g, jsonify, request
 from flask_cors import CORS
+from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, Counter, Histogram, REGISTRY, generate_latest, multiprocess
 
 BASE_DIR = Path(__file__).resolve().parent
 MODELS_FILE = BASE_DIR / "ai_models.pkl"
@@ -19,6 +22,40 @@ app = Flask(__name__)
 CORS(app)
 models: dict = {}
 dataset = pd.DataFrame()
+http_requests = Counter(
+    "smart_support_ai_http_requests_total",
+    "Total HTTP requests handled by the AI service",
+    ["method", "endpoint", "status"],
+)
+http_request_duration = Histogram(
+    "smart_support_ai_http_request_duration_seconds",
+    "HTTP request duration in seconds for the AI service",
+    ["method", "endpoint"],
+)
+
+
+@app.before_request
+def start_request_timer() -> None:
+    g.request_started_at = time.perf_counter()
+
+
+@app.after_request
+def record_request_metrics(response: Response) -> Response:
+    method = request.method
+    endpoint = request.endpoint or "unknown"
+    http_requests.labels(method, endpoint, str(response.status_code)).inc()
+    http_request_duration.labels(method, endpoint).observe(time.perf_counter() - g.request_started_at)
+    return response
+
+
+@app.get("/metrics")
+def prometheus_metrics() -> Response:
+    if os.environ.get("PROMETHEUS_MULTIPROC_DIR"):
+        registry = CollectorRegistry()
+        multiprocess.MultiProcessCollector(registry)
+    else:
+        registry = REGISTRY
+    return Response(generate_latest(registry), mimetype=CONTENT_TYPE_LATEST)
 
 
 def load_artifacts() -> None:
@@ -101,7 +138,7 @@ def similar() -> tuple:
 
 
 @app.get("/api/ai/metrics")
-def metrics() -> tuple:
+def ai_metrics() -> tuple:
     artifacts, error = require_models()
     if error:
         return error
@@ -114,4 +151,4 @@ def metrics() -> tuple:
 load_artifacts()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", "5000")), debug=False)
