@@ -22,12 +22,23 @@ pipeline {
         stage('Cleanup Previous Run') {
             steps {
                 sh '''
-                    set -e
-                    docker compose down --remove-orphans || true
+                    set +e
 
-                    # Remove stale containers created by previous runs
-                    docker rm -f prometheus grafana || true
-                    docker rm -f ai-service auth-service user-service ticket-service notification-service api-gateway config-server discovery-service client postgres user-postgres notification-postgres ticket-postgres sonarqube-postgres sonarqube || true
+                    # Stop and remove the current compose project (images locales incluses)
+                    docker compose down --remove-orphans --rmi local || true
+
+                    # Remove ALL app containers regardless of the compose project name
+                    docker ps -a --format '{{.Names}}' \
+                      | grep -E '^(smart-support-client|client|prometheus|grafana|ai-service|auth-service|user-service|ticket-service|notification-service|api-gateway|config-server|discovery-service|postgres|user-postgres|notification-postgres|ticket-postgres|sonarqube-postgres|sonarqube)$' \
+                      | xargs -r docker rm -f || true
+
+                    # Explicit fallback for the container that caused the conflict
+                    docker rm -f smart-support-client || true
+
+                    # Remove orphan networks from previous runs
+                    docker network rm smartsupport-integration_microservices-net || true
+
+                    set -e
                 '''
             }
         }
@@ -43,7 +54,7 @@ pipeline {
         stage('Start Application') {
             steps {
                 sh '''
-                    docker compose up -d
+                    docker compose up -d --remove-orphans
                 '''
             }
         }
